@@ -3,6 +3,7 @@ from services.database import MongoDBService
 from dotenv import load_dotenv
 import os
 import custom_logger  
+from model import User
 
 # Load environment variables from the .env file
 load_dotenv()

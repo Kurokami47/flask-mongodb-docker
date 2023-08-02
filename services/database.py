@@ -1,5 +1,7 @@
 from pymongo import MongoClient
 from bson import ObjectId  # Import the ObjectId class from bson module
+from model import User
+
 
 class MongoDBService:
     def __init__(self, mongo_uri):
