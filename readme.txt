@@ -62,7 +62,39 @@ Before running the application, ensure you have the following installed:
    python generatedummy_data.py
    ```
 
+Using the API
 
+Once the API is running, you can use tools like Postman to interact with the API and perform CRUD operations on user data.
+Endpoints
+
+The API provides the following endpoints:
+
+    Create a New User (POST):
+        Endpoint: http://127.0.0.1:5000/users
+        Method: POST
+        Request Body: JSON payload with user data (name, email, password)
+        Response: JSON response with a message indicating success and the ID of the created user.
+
+    Fetch All Users (GET):
+        Endpoint: http://127.0.0.1:5000/users
+        Method: GET
+        Response: JSON response with an array of all user data.
+
+    Get a User by ID (GET):
+        Endpoint: http://127.0.0.1:5000/users/<user_id>
+        Method: GET
+        Response: JSON response with user data for the specified user ID.
+
+    Update a User by ID (PUT):
+        Endpoint: http://127.0.0.1:5000/users/<user_id>
+        Method: PUT
+        Request Body: JSON payload with updated user data (name, email, password)
+        Response: JSON response with a message indicating success.
+
+    Delete a User by ID (DELETE):
+        Endpoint: http://127.0.0.1:5000/users/<user_id>
+        Method: DELETE
+        Response: JSON response with a message indicating success.
 
 
 ## Testing the Application
