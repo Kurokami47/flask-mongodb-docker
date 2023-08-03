@@ -12,7 +12,7 @@ This is a simple Flask application with CRUD operations (Create, Read, Update, D
 ## Prerequisites
 
 Before running the application, ensure you have the following installed:
-- Python 3.6 or higher
+- Python 3.11 or higher
 - pip package manager
 - MongoDB Atlas account (for database access)
 
