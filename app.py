@@ -1,8 +1,9 @@
-from flask import Flask, jsonify, request
+from flask import Flask
+from flask_restful import Api, Resource, reqparse
 from services.database import MongoDBService
 from dotenv import load_dotenv
 import os
-import custom_logger  
+import custom_logger
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -15,41 +16,47 @@ app.config['MONGO_URI'] = os.environ.get('MONGO_URI', 'mongodb://localhost:27017
 
 mongo_service = MongoDBService(app.config['MONGO_URI'])
 
-# Route to create a new user and store it in the "users" collection
-@app.route('/users', methods=['POST'])
-def create_user():
-    data = request.get_json()
-    result = mongo_service.create_user(data)
-    custom_logger.logging.info('New user created: {}'.format(data['name']))  # Use the logging instance from custom_logger
-    return jsonify(result), 201
+# Define the request parser for user data
+user_parser = reqparse.RequestParser()
+user_parser.add_argument('name', type=str, required=True, help='Name field cannot be blank.')
+user_parser.add_argument('email', type=str, required=True, help='Email field cannot be blank.')
+user_parser.add_argument('password', type=str, required=True, help='Password field cannot be blank.')
 
-# Route to get all users from the "users" collection
-@app.route('/users', methods=['GET'])
-def get_users():
-    result = mongo_service.get_users()
-    return jsonify(result)
 
-# Route to get a user by ID from the "users" collection
-@app.route('/users/<string:user_id>', methods=['GET'])
-def get_user_with_id(user_id):
-    result = mongo_service.get_user_with_id(user_id)
-    return jsonify(result)
+class UserResource(Resource):
+    def get(self, user_id):
+        result = mongo_service.get_user_with_id(user_id)
+        return result
 
-# Route to update a user by ID in the "users" collection
-@app.route('/users/<string:user_id>', methods=['PUT'])
-def update_user(user_id):
-    data = request.get_json()
-    result = mongo_service.update_user(user_id, data)
-    custom_logger.logging.info('User updated: {}'.format(user_id))  # Use the logging instance from custom_logger
-    return jsonify(result)
+    def put(self, user_id):
+        data = user_parser.parse_args()
+        result = mongo_service.update_user(user_id, data)
+        custom_logger.logging.info('User updated: {}'.format(user_id))  # Use the logging instance from custom_logger
+        return result
 
-# Route to delete a user by ID from the "users" collection
-@app.route('/users/<string:user_id>', methods=['DELETE'])
-def delete_user(user_id):
-    result = mongo_service.delete_user(user_id)
-    custom_logger.logging.info('User deleted: {}'.format(user_id))  # Use the logging instance from custom_logger
-    return jsonify(result)
+    def delete(self, user_id):
+        result = mongo_service.delete_user(user_id)
+        custom_logger.logging.info('User deleted: {}'.format(user_id))  # Use the logging instance from custom_logger
+        return result
 
+
+class UserListResource(Resource):
+    def get(self):
+        result = mongo_service.get_users()
+        return result
+
+    def post(self):
+        data = user_parser.parse_args()
+        result = mongo_service.create_user(data)
+        custom_logger.logging.info('New user created: {}'.format(data['name']))  # Use the logging instance from custom_logger
+        return result
+
+
+api = Api(app)
+
+# Add the resources to the API
+api.add_resource(UserResource, '/users/<string:user_id>')
+api.add_resource(UserListResource, '/users')
 
 
 if __name__ == '__main__':
